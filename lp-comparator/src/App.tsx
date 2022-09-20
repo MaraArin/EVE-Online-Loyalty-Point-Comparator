@@ -1,5 +1,5 @@
-import React from "react";
-import { CSVLink, CSVDownload } from "react-csv";
+import React, { useMemo } from "react";
+import { CSVLink } from "react-csv";
 import { useOfferCalculator } from "./component/OfferCalculator";
 import { offerTableDefinition, Styles, Table } from "./component/OfferTable";
 
@@ -22,8 +22,8 @@ function App() {
         setFetchedTimestamp,
     } = useOfferCalculator();
 
-    const columns = React.useMemo(() => offerTableDefinition, []);
-    const data = React.useMemo(() => enrichedLoyaltyOffers, [marketData]);
+    const columns = useMemo(() => offerTableDefinition, []);
+    const data = useMemo(() => enrichedLoyaltyOffers, [marketData]);
 
     return (
         <>
