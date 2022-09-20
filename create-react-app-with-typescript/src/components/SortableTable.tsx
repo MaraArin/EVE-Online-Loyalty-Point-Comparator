@@ -9,52 +9,20 @@ import {
     TablePagination,
 } from "@mui/material";
 import React from "react";
-import { EnrichedOffer } from "./OfferCalculator";
-
-const headCells: readonly HeadCell[] = [
-    {
-        label: "Faction Name",
-        id: "faction_name",
-    },
-    {
-        label: "Corporation Name",
-        id: "corporation_name",
-    },
-    {
-        label: "Item Name",
-        id: "type_name",
-    },
-    {
-        label: "Market Group",
-        id: "market_group",
-    },
-    {
-        label: "LP Cost",
-        id: "lp_cost",
-    },
-    {
-        label: "ISK Cost",
-        id: "isk_cost",
-    },
-    {
-        label: "Quantity",
-        id: "quantity",
-    },
-    {
-        label: "Buy Volume",
-        id: "buy_market_volume",
-    },
-    {
-        label: "ISK per LP",
-        id: "isk_per_lp",
-    },
-];
 
 export type Order = "asc" | "desc";
 
-export interface HeadCell {
-    id: keyof EnrichedOffer;
-    label: string;
+export type stringOrNumber = string | number;
+
+export interface ObjectOfStringOrNumber {
+    [index: string]: stringOrNumber;
+}
+
+export interface TableDefinition<T> {
+    data: T[];
+    sortBy: string;
+    keyMaker: (a: T) => string;
+    headCells: { id: string; label: string }[];
 }
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -79,16 +47,19 @@ function getComparator<Key extends keyof any>(
         : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-export function SortableTable({ data }: { data: EnrichedOffer[] }) {
+export function SortableTable<T extends ObjectOfStringOrNumber>({
+    definition,
+}: {
+    definition: TableDefinition<T>;
+}) {
     const [order, setOrder] = React.useState<Order>("desc");
-    const [orderBy, setOrderBy] =
-        React.useState<keyof EnrichedOffer>("isk_per_lp");
+    const [orderBy, setOrderBy] = React.useState(definition.sortBy);
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
     const handleRequestSort = (
         event: React.MouseEvent<unknown>,
-        property: keyof EnrichedOffer
+        property: string
     ) => {
         const isAsc = orderBy === property && order === "asc";
         setOrder(isAsc ? "desc" : "asc");
@@ -109,12 +80,13 @@ export function SortableTable({ data }: { data: EnrichedOffer[] }) {
     return (
         <Table>
             <SortableTableHead
+                definition={definition}
                 order={order}
                 orderBy={orderBy}
                 onRequestSort={handleRequestSort}
             />
-            <SortableTableBody
-                data={data}
+            <SortableTableBody<T>
+                definition={definition}
                 page={page}
                 rowsPerPage={rowsPerPage}
                 order={order}
@@ -123,7 +95,7 @@ export function SortableTable({ data }: { data: EnrichedOffer[] }) {
             <TableFooter>
                 <TableRow>
                     <TablePagination
-                        count={data.length}
+                        count={definition.data.length}
                         rowsPerPage={rowsPerPage}
                         page={page}
                         onPageChange={handleChangePage}
@@ -135,28 +107,26 @@ export function SortableTable({ data }: { data: EnrichedOffer[] }) {
     );
 }
 
-function SortableTableHead({
+function SortableTableHead<T>({
+    definition,
     order,
     orderBy,
     onRequestSort,
 }: {
-    onRequestSort: (
-        event: React.MouseEvent<unknown>,
-        property: keyof EnrichedOffer
-    ) => void;
+    definition: TableDefinition<T>;
+    onRequestSort: (event: React.MouseEvent<unknown>, property: string) => void;
     order: Order;
     orderBy: string;
 }) {
     const createSortHandler =
-        (property: keyof EnrichedOffer) =>
-        (event: React.MouseEvent<unknown>) => {
+        (property: string) => (event: React.MouseEvent<unknown>) => {
             onRequestSort(event, property);
         };
 
     return (
         <TableHead>
             <TableRow>
-                {headCells.map((headCell) => (
+                {definition.headCells.map((headCell) => (
                     <TableCell
                         key={headCell.id}
                         sortDirection={orderBy === headCell.id ? order : false}
@@ -175,14 +145,14 @@ function SortableTableHead({
     );
 }
 
-function SortableTableBody({
-    data,
+function SortableTableBody<T extends ObjectOfStringOrNumber>({
+    definition,
     page,
     rowsPerPage,
     order,
     orderBy,
 }: {
-    data: EnrichedOffer[];
+    definition: TableDefinition<T>;
     page: number;
     rowsPerPage: number;
     order: Order;
@@ -190,18 +160,14 @@ function SortableTableBody({
 }) {
     return (
         <TableBody>
-            {data
+            {definition.data
                 .slice()
-                // @ts-ignore complains about types, but I don't want to solve the type puzzle right now
                 .sort(getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
                     return (
-                        <TableRow
-                            hover
-                            key={row.type_id + row.corporation_name}
-                        >
-                            {headCells.map((headCell) => (
+                        <TableRow hover key={definition.keyMaker(row)}>
+                            {definition.headCells.map((headCell) => (
                                 <TableCell>{row[headCell.id]}</TableCell>
                             ))}
                         </TableRow>

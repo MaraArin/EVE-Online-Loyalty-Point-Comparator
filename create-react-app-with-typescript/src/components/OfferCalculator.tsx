@@ -77,6 +77,7 @@ export interface Offer extends FlatOffer {
 }
 
 export interface EnrichedOffer extends FlatOffer {
+    [index: string]: string | number;
     isk_per_lp: number;
     buy_market_volume: number;
 }
@@ -138,7 +139,14 @@ function enrichOffer(
     marketData: FuzzworksMarketData
 ): EnrichedOffer {
     return {
-        ...offer,
+        isk_cost: offer.isk_cost,
+        lp_cost: offer.lp_cost,
+        quantity: offer.quantity,
+        type_id: offer.type_id,
+        type_name: offer.type_name,
+        market_group: offer.market_group,
+        corporation_name: offer.corporation_name,
+        faction_name: offer.faction_name,
         isk_per_lp: offerProfitPerLp(offer, marketData),
         buy_market_volume: Math.round(
             Number(marketData[offer.type_id].buy.volume)

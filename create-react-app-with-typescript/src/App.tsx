@@ -1,7 +1,53 @@
 import * as React from "react";
-import { useOfferCalculator } from "./components/OfferCalculator";
-import { SortableTable } from "./components/OfferTable";
+import {
+    EnrichedOffer,
+    useOfferCalculator,
+} from "./components/OfferCalculator";
+import { SortableTable, TableDefinition } from "./components/SortableTable";
 import { Container, Stack, Typography } from "@mui/material";
+
+const headCells = [
+    {
+        label: "Faction Name",
+        id: "faction_name",
+    },
+    {
+        label: "Corporation Name",
+        id: "corporation_name",
+    },
+    {
+        label: "Item Name",
+        id: "type_name",
+    },
+    {
+        label: "Market Group",
+        id: "market_group",
+    },
+    {
+        label: "LP Cost",
+        id: "lp_cost",
+    },
+    {
+        label: "ISK Cost",
+        id: "isk_cost",
+    },
+    {
+        label: "Quantity",
+        id: "quantity",
+    },
+    {
+        label: "Buy Volume",
+        id: "buy_market_volume",
+    },
+    {
+        label: "ISK per LP",
+        id: "isk_per_lp",
+    },
+];
+
+function keyMaker(offer: EnrichedOffer): string {
+    return offer.type_id + offer.corporation_name;
+}
 
 export default function BasicStack() {
     return (
@@ -43,5 +89,12 @@ function Blubla() {
     const { enrichedLoyaltyOffers, marketData, isLoading, isCalculating } =
         useOfferCalculator();
 
-    return <SortableTable data={enrichedLoyaltyOffers} />;
+    const definition: TableDefinition<EnrichedOffer> = {
+        data: enrichedLoyaltyOffers,
+        sortBy: "isk_per_lp",
+        keyMaker: keyMaker,
+        headCells: headCells,
+    };
+
+    return <SortableTable<EnrichedOffer> definition={definition} />;
 }
