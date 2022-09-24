@@ -98,7 +98,26 @@ function TopBar() {
         <AppBar position="relative">
             <Toolbar>
                 <img src={logo} alt="Eden's Loyalty logo" />
-                <Typography sx={{ flexGrow: 1 }}>Eden's Loyalty</Typography>
+                <List sx={{ flexGrow: 1, padding: 0 }}>
+                    <ListItem>
+                        <ListItemText
+                            primaryTypographyProps={{ color: "#FFBF00" }}
+                            primary="Eden's Loyalty"
+                            secondary={
+                                <>
+                                    by{" "}
+                                    <Link
+                                        href="https://evewho.com/character/2117176366"
+                                        target="_blank"
+                                        rel="noopener"
+                                    >
+                                        Arin Mara
+                                    </Link>
+                                </>
+                            }
+                        ></ListItemText>
+                    </ListItem>
+                </List>
                 <AboutButton />
             </Toolbar>
         </AppBar>
@@ -126,6 +145,9 @@ function AboutButton() {
                         all New Eden's Loyalty Point offers.
                     </DialogContentText>
                     <DialogContentText variant="h6">Contact</DialogContentText>
+                    <DialogContentText>
+                        ISK donations are most welcome.
+                    </DialogContentText>
                     <List>
                         <ListItem>
                             <DialogContentText>
