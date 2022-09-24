@@ -1,10 +1,10 @@
 {
   "files": {
-    "main.js": "/EVE-Online-Loyalty-Point-Comparator/static/js/main.34236757.js",
+    "main.js": "/EVE-Online-Loyalty-Point-Comparator/static/js/main.f93f8ef6.js",
     "index.html": "/EVE-Online-Loyalty-Point-Comparator/index.html",
-    "main.34236757.js.map": "/EVE-Online-Loyalty-Point-Comparator/static/js/main.34236757.js.map"
+    "main.f93f8ef6.js.map": "/EVE-Online-Loyalty-Point-Comparator/static/js/main.f93f8ef6.js.map"
   },
   "entrypoints": [
-    "static/js/main.34236757.js"
+    "static/js/main.f93f8ef6.js"
   ]
 }
