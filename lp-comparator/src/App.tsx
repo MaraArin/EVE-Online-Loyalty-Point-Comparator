@@ -55,7 +55,7 @@ export default function App() {
                         >
                             download
                         </CSVLink>{" "}
-                        the offers in CSV format.
+                        (~5MB) the offers in CSV format.
                     </Typography>
                     <List>
                         <ListItem disableGutters>
